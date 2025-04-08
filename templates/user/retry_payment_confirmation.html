@@ -1,0 +1,370 @@
+{% extends 'base.html' %}
+
+{% block title %}Retry Payment{% endblock %}
+
+{% block extra_css %}
+<style>
+    .breadcrumb a {
+        color: #088178;
+        text-decoration: none;
+    }
+
+    .breadcrumb span {
+        margin: 0 10px;
+        color: #666;
+    }
+
+
+    .sidebar {
+        position: sticky;
+        top: 20px;
+    }
+
+    .nav-link {
+        color: #2c3e50;
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+        background-color: #f8f9fa;
+        color: #088178;
+        padding-left: 25px;
+    }
+
+    .nav-link.active {
+        background-color: #edf7f7;
+        color: #088178;
+    }
+
+    .nav-link i {
+        margin-right: 10px;
+    }
+
+    .logout-link {
+        color: #dc3545;
+    }
+
+    .logout-link:hover {
+        background-color: #fff5f5;
+        color: #dc3545;
+    }
+
+    .payment-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+
+    .payment-header {
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .payment-header h2 {
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .payment-header .order-id {
+        position: absolute;
+        right: 0;
+        top: 0;
+        font-size: 0.9rem;
+        color: #6c757d;
+        background-color: #f8f9fa;
+        padding: 4px 10px;
+        border-radius: 4px;
+    }
+
+    .payment-details {
+        margin-bottom: 25px;
+    }
+
+    .payment-amount {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+    }
+
+    .payment-amount .label {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .payment-amount .amount {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #088178;
+    }
+
+    .btn-confirm {
+        background-color: #088178;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 30px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-confirm:hover {
+        background-color: #066c65;
+        color: #fff;
+    }
+
+    .btn-cancel {
+        background-color: #f1f1f1;
+        color: #333;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 30px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background-color: #e0e0e0;
+    }
+
+    .payment-actions {
+        display: flex;
+        gap: 15px;
+    }
+
+    .alert-danger {
+        border-radius: 8px;
+        background-color: #ffeeee;
+        border-color: #ffcccc;
+        color: #dc3545;
+        display: flex;
+        align-items: center;
+    }
+
+    .alert-icon {
+        font-size: 1.5rem;
+        margin-right: 10px;
+    }
+
+    .payment-card {
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 991px) {
+        .sidebar {
+            position: static;
+            margin-bottom: 30px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Display Django Messages -->
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+
+
+<div class="container my-4">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="{% url 'home' %}">Home</a>
+        <span>/</span>
+        <a href="{% url 'user_orders' %}">My Orders</a>
+        <span>/</span>
+        <a href="#">Retry Payment</a>
+    </div>
+
+
+
+    <div class="row mt-4">
+        <!-- Sidebar -->
+        <div class="col-lg-3">
+            <div class="sidebar">
+                <div class="bg-white rounded p-4">
+                    <nav class="nav flex-column">
+                        <a class="nav-link" href="{% url 'user_profile' %}">
+                            <i class="bi bi-person"></i> My Profile
+                        </a>
+                        <a class="nav-link" href="{% url 'addresses' %}">
+                            <i class="bi bi-geo-alt"></i> My Addresses
+                        </a>
+                        <a class="nav-link active" href="{% url 'user_orders' %}">
+                            <i class="bi bi-box"></i> My Orders
+                        </a>
+                        <a class="nav-link" href="{% url 'wallet_view' %}">
+                            <i class="bi bi-wallet"></i> My Wallet
+                        </a>
+                        <a class="nav-link logout-link" href="{% url 'userlogout' %}">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <div class="payment-card">
+                <div class="payment-header">
+                    <h4 class="mb-0">Retry Payment</h4>
+                    <span class="order-id">ORDER NO: #{{ order.id }}</span>
+                </div>
+
+                <!-- Display Error Message from URL -->
+                {% if request.GET.error %}
+                <div class="alert alert-danger">
+                    {{ request.GET.error }}
+                </div>
+                {% endif %}
+
+                <div class="payment-details mt-4">
+                    <p>You are about to retry the payment for your previous order. Please review the details below and
+                        confirm to proceed with the payment.</p>
+
+                    <div class="payment-amount">
+                        <span class="label">Total Amount:</span>
+                        <span class="amount">₹{{ order.total_price }}</span>
+                    </div>
+                </div>
+
+                <form method="POST" action="{% url 'retry_payment' order.id %}">
+                    {% csrf_token %}
+                    <div class="payment-actions">
+                        <button type="submit" class="btn btn-confirm" style="background-color: #088178; color: #fff;">
+                            <i class="bi bi-credit-card me-2"></i>Proceed to Payment
+                        </button>
+                        <a href="{% url 'user_orders' %}" class="btn btn-cancel"
+                            style="background-color: #f1f1f1; color: #333;">
+                            <i class="bi bi-x-circle me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    document.querySelector('form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        fetch("{% url 'retry_payment' order.id %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: new URLSearchParams(new FormData(event.target))
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error("Error in response:", data.error);
+                    alert("Error initiating payment: " + data.error);
+                    return;
+                }
+                if (data.razorpay_order_id) {
+                    console.log("Razorpay Order ID: ", data.razorpay_order_id);
+                    const options = {
+                        key: data.razorpay_merchant_key,
+                        amount: data.razorpay_amount,
+                        currency: data.currency,
+                        name: "AURA ATTIRE",
+                        order_id: data.razorpay_order_id,
+                        handler: function (response) {
+                            fetch("{% url 'paymenthandler' %}", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/x-www-form-urlencoded",
+                                    "X-CSRFToken": "{{ csrf_token }}"
+                                },
+                                body: new URLSearchParams({
+                                    'razorpay_payment_id': response.razorpay_payment_id,
+                                    'razorpay_order_id': response.razorpay_order_id,
+                                    'razorpay_signature': response.razorpay_signature
+                                })
+                            })
+                                .then(response => {
+                                    if (response.ok) {
+                                        window.location.href = data.callback_url;  // Use the callback_url from the backend
+                                    } else {
+                                        // Payment failed, show error message
+                                        document.getElementById('payment-error-message').innerHTML = "<i class='bi bi-exclamation-triangle-fill alert-icon'></i> Failed payment. Please try again.";
+                                        document.getElementById('payment-error-message').style.display = 'block';
+                                        window.location.href = "{% url 'retry_payment' order.id %}";
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    alert("Error processing payment.");
+                                });
+                        },
+                        modal: {
+                            ondismiss: function () {
+                                // Handle modal dismissal (user closes the modal without payment)
+                                console.log("Modal dismissed by user");
+                                window.location.href = "{% url 'retry_payment' order.id %}?error=Payment+Failed.";
+                            }
+                        },
+                        prefill: {
+                            name: "{{ request.user.username }}",
+                            email: "{{ request.user.email }}",
+                            contact: "9995160852"
+                        },
+                        theme: {
+                            color: "#0d6efd"
+                        },
+                        method: {
+                            netbanking: true,
+                            card: true,
+                            wallet: true,
+                            upi: true
+                        }
+                    };
+                    console.log("Razorpay Options: ", options);
+                    const rzp1 = new Razorpay(options);
+                    rzp1.open();
+                } else {
+                    console.error("Error initiating payment: No Razorpay order ID returned.");
+                    alert("Error initiating payment.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Error initiating payment.");
+            });
+    });
+</script>
+
+{% endblock %}
