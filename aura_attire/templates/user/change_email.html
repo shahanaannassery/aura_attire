@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Change Email{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<style>
+    .email-form {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        border: 1px solid #ddd;
+    }
+
+    .email-form h2 {
+        margin-bottom: 20px;
+        font-size: 2rem;
+        color: #333;
+        text-align: center;
+    }
+
+    .email-form label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+        color: #555;
+    }
+
+    .email-form input[type="email"] {
+        width: 100%;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        margin-bottom: 20px;
+        font-size: 1rem;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .email-form button {
+        width: 100%;
+        padding: 15px;
+        background-color: #088178;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: background-color 0.3s ease;
+    }
+
+    .email-form button:hover {
+        background-color: #066c65;
+    }
+
+    .message {
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .message.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .message.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+</style>
+
+<div class="email-form">
+    <h2>Change Email</h2>
+    <div class="messages">
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    <form method="POST" action="/change-email/">
+        {% csrf_token %}
+        <label for="new_email">Enter New Email:</label>
+        <input type="email" name="new_email" id="new_email" required placeholder="New email">
+        <button type="submit">Send OTP</button>
+    </form>
+</div>
+{% endblock %}
