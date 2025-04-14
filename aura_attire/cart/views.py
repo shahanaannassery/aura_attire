@@ -179,7 +179,7 @@ def update_cart(request, item_id, action):
     except Exception as e:
         return JsonResponse({'message': str(e), 'status': 'error'}, status=500)
 
-
+   
 """
 REMOVE FROM CART
 """

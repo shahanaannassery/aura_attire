@@ -218,6 +218,10 @@ def place_order(request):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
 
+
+    # Fetch active and valid coupons
+    active_coupons = Coupon.objects.filter(is_active=True)
+    valid_coupons = [coupon for coupon in active_coupons if coupon.is_valid()]
     # Retrieve the entered coupon code from the session
     entered_coupon_code = request.session.get('entered_coupon_code', '')
     context = {
@@ -231,6 +235,7 @@ def place_order(request):
         'grand_total': grand_total,
         'coupon_discount': coupon_discount,
         'entered_coupon_code': entered_coupon_code,
+        'valid_coupons': valid_coupons,
     }
     return render(request, 'user/checkout.html', context)
 

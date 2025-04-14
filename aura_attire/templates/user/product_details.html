@@ -126,6 +126,17 @@
                             <h3>Product Details</h3>
                             <p>{{ product.description }}</p>
 
+
+                             <!-- OFFER DETAILS SECTION -->
+                             {% if product_offer %}
+                             <div class="product-offer">
+                                 <h3>Special Offer!</h3>
+                                 <p>Get {{ product_offer.discount_percentage }}% off on this product!</p>
+                             </div>
+                         {% else %}
+                             <p>No active offers on this product.</p>
+                         {% endif %}
+
                             <div class="product-features">
                                 <h4>Features</h4>
                                 <ul>
