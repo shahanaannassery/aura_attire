@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Generate Sales Report</title>
+    <link rel="stylesheet" href="{% static 'admin/vendors/mdi/css/materialdesignicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/vendors/css/vendor.bundle.base.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/style.css' %}">
+    <link rel="shortcut icon" href="{% static 'admin/images/favicon.png' %}">
+    <style>
+        body {
+            background-color: #1e2227;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .form-group label {
+            color: #3699ff;
+        }
+
+        .form-group select, .form-group input {
+            background-color: #2d3035;
+            color: #ffffff;
+            border: 1px solid #444;
+        }
+
+        .btn-primary {
+            background-color: #3699ff;
+            border-color: #3699ff;
+        }
+
+        .btn-primary:hover {
+            background-color: #2d82d6;
+            border-color: #2d82d6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-scroller">
+        {% include 'admin/sidebar.html' %}
+        <div class="container-fluid page-body-wrapper">
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-12 grid-margin stretch-card">
+                            <div class="card corona-gradient-card">
+                                <div class="card-body py-0 px-0 px-sm-3"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 grid-margin">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Generate Sales Report</h4>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="date_range">Date Range:</label>
+                                            <select name="date_range" id="date_range" class="form-control">
+                                                <option value="1_day">1 Day</option>
+                                                <option value="1_week">1 Week</option>
+                                                <option value="1_month">1 Month</option>
+                                                <option value="custom">Custom</option>
+                                            </select>
+                                        </div>
+
+                                        <div id="custom_date_range" style="display: none;">
+                                            <div class="form-group">
+                                                <label for="custom_start">Start Date:</label>
+                                                <input type="date" name="custom_start" id="custom_start" class="form-control">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="custom_end">End Date:</label>
+                                                <input type="date" name="custom_end" id="custom_end" class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="report_format">Report Format:</label>
+                                            <select name="report_format" id="report_format" class="form-control">
+                                                <option value="pdf">PDF</option>
+                                                <option value="excel">Excel</option>
+                                            </select>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary">Generate Report</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('date_range').addEventListener('change', function() {
+            var customDateRange = document.getElementById('custom_date_range');
+            if (this.value === 'custom') {
+                customDateRange.style.display = 'block';
+            } else {
+                customDateRange.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

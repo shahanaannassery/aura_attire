@@ -1,0 +1,253 @@
+{% comment %} {% extends "admin/base.html" %}
+
+{% block title %}Wallet Transactions{% endblock %}
+
+{% block extra_css %} {% endcomment %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Coupon List</title>
+    <link rel="stylesheet" href="{% static 'admin/vendors/mdi/css/materialdesignicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/vendors/css/vendor.bundle.base.css' %}">
+    <link rel="stylesheet" href="{% static 'admin/css/style.css' %}">
+    <link rel="shortcut icon" href="{% static 'admin/images/favicon.png' %}">
+    <!-- Internal CSS for dark theme -->
+<style>
+    body {
+        background-color: #1e2227;
+        color: #fff;
+    }
+
+    .container {
+        background-color: #2d3035;
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+    h2 {
+        color: #00bcd4;
+        margin-bottom: 25px;
+    }
+
+    .search-filter-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .search-box input {
+        background-color: #3a3f45;
+        color: #fff;
+        border: 1px solid #555;
+    }
+
+    .search-box .btn {
+        background-color: #00bcd4;
+        color: white;
+    }
+
+    .form-control {
+        background-color: #3a3f45;
+        color: #fff;
+        border: 1px solid #555;
+    }
+
+    .form-control option {
+        background-color: #2d3035;
+        color: #fff;
+    }
+
+    .transaction-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .transaction-table th, .transaction-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #444;
+    }
+
+    .transaction-table th {
+        background-color: #222;
+        color: #00bcd4;
+        font-weight: 600;
+    }
+
+    .transaction-table tr:hover {
+        background-color: #3a3f45;
+    }
+
+    .badge-credit {
+        background-color: #4caf50;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+    }
+
+    .badge-debit {
+        background-color: #f44336;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+    }
+
+    .amount-credit {
+        color: #4caf50;
+        font-weight: 500;
+    }
+
+    .amount-debit {
+        color: #f44336;
+        font-weight: 500;
+    }
+
+    .view-btn {
+        padding: 5px 10px;
+        background-color: #2196f3;
+        color: white;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 14px;
+    }
+
+    .view-btn:hover {
+        background-color: #0d8bf2;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination a {
+        margin: 0 5px;
+        padding: 5px 10px;
+        border: 1px solid #555;
+        background-color: #3a3f45;
+        text-decoration: none;
+        color: #fff;
+    }
+
+    .pagination .active {
+        background-color: #00bcd4;
+        color: white;
+        border-color: #00bcd4;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .py-4 {
+        padding: 1.5rem 0;
+    }
+</style>
+{% comment %} {% endblock %} {% endcomment %}
+</head>
+{% block content %}
+<div class="container">
+    <h2>Wallet Transactions</h2>
+    
+    <div class="search-filter-container">
+        <div class="search-box">
+            <form method="get">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Search..." value="{{ search_query }}">
+                    <div class="input-group-append">
+                        <button class="btn" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div>
+            <form method="get">
+                <select name="filter" class="form-control" onchange="this.form.submit()">
+                    <option value="all" {% if filter_type == 'all' %}selected{% endif %}>All Transactions</option>
+                    <option value="credit" {% if filter_type == 'credit' %}selected{% endif %}>Credits</option>
+                    <option value="debit" {% if filter_type == 'debit' %}selected{% endif %}>Debits</option>
+                </select>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="transaction-table">
+            <thead>
+                <tr>
+                    <th>Transaction ID</th>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Order</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                <tr>
+                    <td>#{{ transaction.id }}</td>
+                    <td>{{ transaction.created_at|date:"M d, Y H:i" }}</td>
+                    <td>{{ transaction.wallet.user.username }}</td>
+                    <td>
+                        <span class="badge-{% if transaction.transaction_type == 'credit' %}credit{% else %}debit{% endif %}">
+                            {{ transaction.transaction_type|title }}
+                        </span>
+                    </td>
+                    <td class="amount-{% if transaction.transaction_type == 'credit' %}credit{% else %}debit{% endif %}">
+                        {% if transaction.transaction_type == 'credit' %}+{% else %}-{% endif %}{{ transaction.amount }}
+                    </td>
+                    <td>
+                        {% if transaction.order %}
+                            <a href="{% url 'admin_order_details' transaction.order.id %}">#{{ transaction.order.id }}</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'admin_wallet_transaction_detail' transaction.id %}" class="view-btn">
+                            View
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-4">No transactions found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if transactions.has_other_pages %}
+    <div class="pagination">
+        {% if transactions.has_previous %}
+            <a href="?page={{ transactions.previous_page_number }}&filter={{ filter_type }}&search={{ search_query }}">&laquo;</a>
+        {% endif %}
+        
+        {% for num in transactions.paginator.page_range %}
+            {% if transactions.number == num %}
+                <a href="?page={{ num }}&filter={{ filter_type }}&search={{ search_query }}" class="active">{{ num }}</a>
+            {% elif num > transactions.number|add:'-3' and num < transactions.number|add:'3' %}
+                <a href="?page={{ num }}&filter={{ filter_type }}&search={{ search_query }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        
+        {% if transactions.has_next %}
+            <a href="?page={{ transactions.next_page_number }}&filter={{ filter_type }}&search={{ search_query }}">&raquo;</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
