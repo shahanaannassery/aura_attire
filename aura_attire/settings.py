@@ -242,4 +242,3 @@ RAZOR_KEY_SECRET = os.getenv("RAZOR_KEY_SECRET")
 # settings.py
 
 CONTACT_EMAIL = 'shahanaannassery@gmail.com'
-

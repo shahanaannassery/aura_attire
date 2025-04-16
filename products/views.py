@@ -13,6 +13,8 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import cloudinary.uploader
 from django.http import Http404
+from offers.models import ProductOffer
+from reviews.models import Review
 
 
 """
@@ -303,12 +305,23 @@ def product_details(request, product_id):
     related_products = ProductWithImages.objects.filter(category=product.category).exclude(id=product_id)
     related_products = random.sample(list(related_products), min(len(related_products), 5))
     
+    can_review = Review.can_review(request.user, product)
+
+    try:
+         product_offer = ProductOffer.objects.get(product=product, is_active=True)
+         offer_price = product.price - (product.price * (product_offer.discount_percentage / 100))
+    except ProductOffer.DoesNotExist:
+         product_offer = None
+         offer_price = None
+    
     context = {
         'product': product,
         'product_images': product_images,
         'related_products': related_products,
         'unique_colors': unique_colors,
         'color_size_dict': json.dumps(color_size_dict),  # Convert to JSON string
+        'product_offer': product_offer, 
+        'offer_price': offer_price, 
     }
     return render(request, 'user/product_details.html', context)
 
