@@ -111,8 +111,11 @@
                     <li class="custom-tab-item">
                         <a class="custom-tab-link active" id="details-tab" data-bs-toggle="tab" href="#details">Details</a>
                     </li>
+                    {% comment %} <li class="custom-tab-item">
+                        <a class="custom-tab-link" id="reviews-tab" data-bs-toggle="tab" href="#reviews">Reviews {{ product.review_count }}</a>
+                    </li> {% endcomment %}
                     <li class="custom-tab-item">
-                        <a class="custom-tab-link" id="reviews-tab" data-bs-toggle="tab" href="#reviews">Reviews ({{ product.review_count }})</a>
+                        <a class="custom-tab-link" href="#reviews">Reviews {{ product.review_count }}</a>
                     </li>
                 </ul>
 
@@ -122,6 +125,17 @@
                         <div class="product-details-content">
                             <h3>Product Details</h3>
                             <p>{{ product.description }}</p>
+
+
+                             <!-- OFFER DETAILS SECTION -->
+                             {% if product_offer %}
+                             <div class="product-offer">
+                                 <h3>Special Offer!</h3>
+                                 <p>Get {{ product_offer.discount_percentage }}% off on this product!</p>
+                             </div>
+                         {% else %}
+                             <p>No active offers on this product.</p>
+                         {% endif %}
 
                             <div class="product-features">
                                 <h4>Features</h4>
@@ -236,7 +250,7 @@
                     <div class="offer-badge">{{ related_product.best_offer_percentage }}% OFF</div>
                 {% endif %}
                 <div class="product-image">
-                    <img src="{{ related_product.images.first.image.url }}" alt="{{ related_product.name }}">
+                    <img src="{{ related_product.image1.url }}" alt="{{ related_product.name }}">
                 </div>
                 <div class="product-info">
                     <h3 class="product-name">{{ related_product.name }}</h3>
@@ -1279,22 +1293,48 @@ body {
             }
         });
     }
-    panel/login/
+   // Update your JavaScript
+document.addEventListener('DOMContentLoaded', function() {
     function scrollToReviews() {
         const reviewsSection = document.getElementById("reviews");
-        reviewsSection.scrollIntoView({ behavior: "smooth" });
+        if (reviewsSection) {
+            reviewsSection.scrollIntoView({ behavior: "smooth" });
+        }
     }
 
     document.querySelectorAll('.custom-tab-link').forEach(tab => {
-        tab.addEventListener('click', function (e) {
+        tab.addEventListener('click', function(e) {
             e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active', 'show'));
+            const targetId = this.getAttribute('href');
+            const target = document.querySelector(targetId);
+            
+            if (!target) return;
+            
+            // Hide all panes
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active', 'show');
+            });
+            
+            // Show target pane
             target.classList.add('active', 'show');
-            document.querySelectorAll('.custom-tab-link').forEach(link => link.classList.remove('active'));
+            
+            // Update active tab
+            document.querySelectorAll('.custom-tab-link').forEach(link => {
+                link.classList.remove('active');
+            });
             this.classList.add('active');
+            
+            // Scroll if it's the reviews tab
+            if (targetId === '#reviews') {
+                scrollToReviews();
+            }
         });
     });
+});
 </script>
+
+
+
+
 {% endblock %}
 {% endblock %}
