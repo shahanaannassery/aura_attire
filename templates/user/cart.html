@@ -5,6 +5,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <!-- Add Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<meta name="csrf-token" content="{{ csrf_token }}">
 
 <style>
     body {
@@ -453,7 +454,12 @@
     {% endif %}
 </div>
 
+
+
 <script>
+
+
+    
     function hideError() {
         document.getElementById('error-message').style.display = 'none';
     }
@@ -469,7 +475,6 @@
             hideError();
         }, 3000);
     }
-
     function updateCart(itemId, action, event) {
         // Prevent default button behavior
         if (event) {
@@ -529,12 +534,17 @@
         const errorMessage = document.getElementById('error-message');
         const isClickInside = errorMessage.contains(event.target);
 
-        if (!isClickInside && errorMessage.style.display === 'flex') {
+        if (!isClickInside && errorMessage.style.display === 'flex') {h 
             hideError();
         }
     });
 
     // JavaScript functions remain the same as in the original template
 </script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 
 {% endblock %}

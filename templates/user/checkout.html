@@ -150,23 +150,39 @@
                 </div>
             </div>
 
-            <!-- Coupon Section -->
-            <div class="mb-4">
-                <h4 class="mb-3">Apply Coupon</h4>
-                <div class="coupon-section">
-                    <form method="post" action="{% url 'apply_coupon' %}" class="d-flex gap-2 mb-2">
-                        {% csrf_token %}
-                        <input type="text" name="coupon_code" class="form-control" placeholder="Enter coupon code"
-                            value="{{ entered_coupon_code }}" required>
-                        <button type="submit" class="btn btn-primary">Apply</button>
-                    </form>
+           <!-- Coupon Section -->
+        <div class="mb-4">
+            <h4 class="mb-3">Apply Coupon</h4>
+            <div class="coupon-section">
+                <form method="post" action="{% url 'apply_coupon' %}" class="d-flex gap-2 mb-2">
+                    {% csrf_token %}
+                    <input type="text" name="coupon_code" class="form-control" placeholder="Enter coupon code"
+                        value="{{ entered_coupon_code }}" required>
+                    <button type="submit" class="btn btn-primary">Apply</button>
+                </form>
 
-                    {% if coupon_discount %}
-                    <div class="d-flex align-items-center gap-2">
-                        <a href="{% url 'remove_coupon' %}" class="btn btn-sm btn-outline-danger">Remove</a>
-                        <span class="text-success">Coupon Applied: {{ request.session.coupon_code }} ₹{{ coupon_discount|floatformat:2 }} off</span>
-                    </div>
-                    {% endif %}
+                {% if coupon_discount %}
+                <div class="d-flex align-items-center gap-2">
+                    <a href="{% url 'remove_coupon' %}" class="btn btn-sm btn-outline-danger">Remove</a>
+                    <span class="text-success">Coupon Applied: {{ request.session.coupon_code }} ₹{{ coupon_discount|floatformat:2 }} off</span>
+                </div>
+                {% endif %}
+
+                <div class="mt-4">
+                    <h5>Available Coupons</h5>
+                    <ul class="list-unstyled">
+                        {% for coupon in valid_coupons %}
+                            <li>
+                                <span class="badge bg-primary">{{ coupon.coupon_code }}</span> - {{ coupon.discount_percentage }}% off
+                                {% if coupon.description %}
+                                    <small class="text-muted">({{ coupon.description }})</small>
+                                {% endif %}
+                            </li>
+                        {% empty %}
+                            <li>No available coupons at the moment.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
 
                     <!-- Display messages -->
                     {% if messages %}
