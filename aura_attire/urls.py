@@ -38,7 +38,7 @@ urlpatterns = [
     path('offers/', include('offers.urls')),
     path('wishlist/', include('wishlist.urls')),
     path('payments/', include('payments.urls')),
-    # path('review/', include('reviews.urls')),
+    path('review/', include('reviews.urls')),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

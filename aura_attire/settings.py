@@ -89,6 +89,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -135,11 +136,12 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'auraattire',
         'USER': 'postgres',
-        'PASSWORD': '     ',
+        'PASSWORD':"     '",
         'HOST': 'localhost',
         'PORT': '5432',
     }
 }
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -191,11 +193,18 @@ ACCOUNT_EMAIL_VERIFICATION = "optional"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  
+# STATIC_URL = '/static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  
 
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static'),  # Your project’s static directory
+# ]
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # Your project’s static directory
+  os.path.join(BASE_DIR, 'static'),
 ]
 
 # Default primary key field type
@@ -233,3 +242,4 @@ RAZOR_KEY_SECRET = os.getenv("RAZOR_KEY_SECRET")
 # settings.py
 
 CONTACT_EMAIL = 'shahanaannassery@gmail.com'
+
